@@ -579,8 +579,8 @@ paises = int(df["pais"].nunique(dropna=True))
 edad_prom = (df["edad"].mean() if df["edad"].notna().any() else np.nan)
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Registros", total)
-c2.metric("Asistieron (presencia/online)", asistio)
-c3.metric("Virtual (sin presencia)", virtual)
+c2.metric("Asistieron (presencial)", asistio)
+c3.metric("Virtual (con presencia)", virtual)
 c4.metric("Países", paises)
 c5.metric("Edad promedio", f"{edad_prom:.1f}" if pd.notna(
     edad_prom) else "s/d")
@@ -866,11 +866,30 @@ def _equipos_consolidado(data, teams_form):
     ], ignore_index=True)
 
     merged["pais_persona"] = merged["pais_form"].fillna(merged["pais_csv"])
-    merged["persona_key"] = merged["persona_id"].fillna(
-        merged["correo"]).fillna("")
+    merged["persona_key"] = merged["persona_id"].fillna(merged["correo"]).fillna("")
     merged = merged[merged["persona_key"].astype(str).str.len() > 0]
-    return base, merged
 
+    # --- Overrides manuales de país por equipo (AQUÍ) ---
+    team_country_override = {
+        _norm_team("PWN4D3R0S"): "Colombia",
+        # agrega más si hace falta:
+        # _norm_team("OTRO_EQUIPO"): "México",
+    }
+    if not merged.empty:
+        mask_ovr = merged["equipo_ref"].isin(team_country_override.keys())
+        merged.loc[mask_ovr, "pais_persona"] = merged.loc[mask_ovr, "equipo_ref"].map(team_country_override)
+        # (opcional) mini-log para verificar en pantalla
+        if mask_ovr.any():
+            aplicados = (merged.loc[mask_ovr]
+                              .groupby("equipo_ref")["persona_key"]
+                              .nunique()
+                              .reset_index(name="miembros_afectados"))
+            st.caption("🔧 Overrides de país aplicados:")
+            for _, r in aplicados.iterrows():
+                st.caption(f"- {r['equipo_ref']} → {team_country_override[r['equipo_ref']]} "
+                           f"(miembros ajustados: {int(r['miembros_afectados'])})")
+
+    return base, merged
 
 base_csv, merged = _equipos_consolidado(data, teams_form)
 
