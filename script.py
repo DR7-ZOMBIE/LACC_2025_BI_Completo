@@ -513,46 +513,46 @@ if use_forms:
         st.success(
             f"📒 Formularios integrados: **{teams_form['__file'].nunique()}** archivo(s), **{len(teams_form)}** filas.")
 
-# ========== Descargas ==========
-buf = io.BytesIO()
-data.to_csv(buf, index=False, encoding="utf-8-sig")
-st.download_button("⬇️ Descargar CSV limpio", data=buf.getvalue(),
-                   file_name="LACC2025_limpio.csv", mime="text/csv")
+# # ========== Descargas ==========
+# buf = io.BytesIO()
+# data.to_csv(buf, index=False, encoding="utf-8-sig")
+# st.download_button("⬇️ Descargar CSV limpio", data=buf.getvalue(),
+#                    file_name="LACC2025_limpio.csv", mime="text/csv")
 
 
-def export_excel(df):
-    try:
-        with pd.ExcelWriter("LACC2025_report.xlsx", engine="xlsxwriter") as xl:
-            df.to_excel(xl, index=False, sheet_name="Limpio")
-            pd.crosstab(df["pais"], df["modalidad"]).to_excel(
-                xl, sheet_name="Pais x Modalidad")
-            pd.crosstab(df["pais"], df["attendance"]).to_excel(
-                xl, sheet_name="Pais x Attendance")
-            (df.groupby("pais")["equipo"].nunique().rename("equipos_unicos")
-               .reset_index().to_excel(xl, index=False, sheet_name="Equipos por país"))
-    except ModuleNotFoundError:
-        try:
-            with pd.ExcelWriter("LACC2025_report.xlsx", engine="openpyxl") as xl:
-                df.to_excel(xl, index=False, sheet_name="Limpio")
-                pd.crosstab(df["pais"], df["modalidad"]).to_excel(
-                    xl, sheet_name="Pais x Modalidad")
-                pd.crosstab(df["pais"], df["attendance"]).to_excel(
-                    xl, sheet_name="Pais x Attendance")
-                (df.groupby("pais")["equipo"].nunique().rename("equipos_unicos")
-                   .reset_index().to_excel(xl, index=False, sheet_name="Equipos por país"))
-        except ModuleNotFoundError:
-            st.warning(
-                "⚠️ No encontré 'xlsxwriter' ni 'openpyxl'. Instala uno: pip install xlsxwriter ó pip install openpyxl")
+# def export_excel(df):
+#     try:
+#         with pd.ExcelWriter("LACC2025_report.xlsx", engine="xlsxwriter") as xl:
+#             df.to_excel(xl, index=False, sheet_name="Limpio")
+#             pd.crosstab(df["pais"], df["modalidad"]).to_excel(
+#                 xl, sheet_name="Pais x Modalidad")
+#             pd.crosstab(df["pais"], df["attendance"]).to_excel(
+#                 xl, sheet_name="Pais x Attendance")
+#             (df.groupby("pais")["equipo"].nunique().rename("equipos_unicos")
+#                .reset_index().to_excel(xl, index=False, sheet_name="Equipos por país"))
+#     except ModuleNotFoundError:
+#         try:
+#             with pd.ExcelWriter("LACC2025_report.xlsx", engine="openpyxl") as xl:
+#                 df.to_excel(xl, index=False, sheet_name="Limpio")
+#                 pd.crosstab(df["pais"], df["modalidad"]).to_excel(
+#                     xl, sheet_name="Pais x Modalidad")
+#                 pd.crosstab(df["pais"], df["attendance"]).to_excel(
+#                     xl, sheet_name="Pais x Attendance")
+#                 (df.groupby("pais")["equipo"].nunique().rename("equipos_unicos")
+#                    .reset_index().to_excel(xl, index=False, sheet_name="Equipos por país"))
+#         except ModuleNotFoundError:
+#             st.warning(
+#                 "⚠️ No encontré 'xlsxwriter' ni 'openpyxl'. Instala uno: pip install xlsxwriter ó pip install openpyxl")
 
 
-export_excel(data)
+# export_excel(data)
 
-if os.path.exists("LACC2025_report.xlsx"):
-    with open("LACC2025_report.xlsx", "rb") as f:
-        st.download_button("⬇️ Descargar Excel (resúmenes)",
-                           data=f.read(), file_name="LACC2025_report.xlsx")
+# if os.path.exists("LACC2025_report.xlsx"):
+#     with open("LACC2025_report.xlsx", "rb") as f:
+#         st.download_button("⬇️ Descargar Excel (resúmenes)",
+#                            data=f.read(), file_name="LACC2025_report.xlsx")
 
-st.divider()
+# st.divider()
 
 # ========== Filtros ==========
 st.subheader("🎛️ Filtros")
