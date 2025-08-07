@@ -1,0 +1,11 @@
+# requirements.txt
+streamlit>=1.27,<2
+pandas>=1.5
+numpy>=1.23
+plotly>=5.15
+
+# Motores Excel (lectura y escritura)
+openpyxl>=3.1      # .xlsx
+xlsxwriter>=3.1    # escribir .xlsx
+xlrd==1.2.0        # .xls (version antigua que aún soporta .xls)
+
