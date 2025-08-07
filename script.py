@@ -592,7 +592,7 @@ def show(fig, text):
     st.plotly_chart(fig, use_container_width=True)
     st.markdown(text)
 
-
+# ========== Visualizaciones ==========
 st.divider()
 st.subheader("📈 Visualizaciones con insights")
 
